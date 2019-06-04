@@ -1,0 +1,58 @@
+version: '3'
+services:
+  mariadb:
+    image: 'bitnami/mariadb:10.3'
+    networks:
+      - wordpress
+      - default
+    volumes:
+      - 'mariadb_data:/bitnami'
+    environment:
+      - MARIADB_USER=bn_wordpress
+      - MARIADB_DATABASE=bitnami_wordpress
+      - ALLOW_EMPTY_PASSWORD=yes
+  wordpress:
+    image: 'bitnami/wordpress:5'
+    networks:
+      - wordpress
+      - default
+#    ports:
+#      - '80:80'
+#      - '443:443'
+    volumes:
+      - 'wordpress_data:/home/coder/project'
+    depends_on:
+      - mariadb
+    environment:
+      - MARIADB_HOST=mariadb
+      - MARIADB_PORT_NUMBER=3306
+      - WORDPRESS_DATABASE_USER=bn_wordpress
+      - WORDPRESS_DATABASE_NAME=bitnami_wordpress
+      - ALLOW_EMPTY_PASSWORD=yes
+    labels:
+      - "traefik.backend=wordpress-example"
+      - "traefik.docker.network=wordpress"
+      - "traefik.frontend.rule=Host:wordpress.local,www.wordpress.local"
+      - "traefik.enable=true"
+      - "traefik.port=80"
+  code-server:
+    image: 'codercom/code-server'
+    networks:
+      - wordpress
+      - default
+    ports:
+      - '40:8443'
+    volumes:
+      - 'wordpress_data:/home/coder/project'
+    depends_on:
+      - wordpress
+volumes:
+  mariadb_data:
+    driver: local
+  wordpress_data:
+    driver: local
+
+
+networks:
+  wordpress:
+    external: true

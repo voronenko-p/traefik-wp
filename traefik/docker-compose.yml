@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  reverse-proxy:
+    image: traefik
+    container_name: traefik
+    command: --api --docker
+    networks:
+      - wordpress
+    ports:
+      - "180:80"
+      - "1443:443"
+      - "18080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./traefik.toml:/traefik.toml
+      - ./acme.json:/acme.json
+
+networks:
+  wordpress:
+    external: true
