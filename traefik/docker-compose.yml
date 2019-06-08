@@ -3,8 +3,13 @@ version: '3'
 services:
   reverse-proxy:
     image: traefik
-    container_name: traefik
-    command: --api --docker
+#    container_name: traefik
+    command:
+      - "--api"
+      - "--docker"
+      - "--docker.swarmMode"
+#      - "--docker.domain=mydomain.local"
+      - "--docker.watch"
     networks:
       - wordpress
     ports:
@@ -18,4 +23,7 @@ services:
 
 networks:
   wordpress:
+    driver: overlay
     external: true
+  traefik:
+    driver: overlay

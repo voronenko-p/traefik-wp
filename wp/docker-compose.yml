@@ -7,6 +7,8 @@ services:
       - default
     volumes:
       - 'mariadb_data:/bitnami'
+    deploy:
+      replicas: 1
     environment:
       - MARIADB_USER=bn_wordpress
       - MARIADB_DATABASE=bitnami_wordpress
@@ -16,6 +18,8 @@ services:
     networks:
       - wordpress
       - default
+    deploy:
+      replicas: 1
 #    ports:
 #      - '80:80'
 #      - '443:443'
@@ -29,17 +33,21 @@ services:
       - WORDPRESS_DATABASE_USER=bn_wordpress
       - WORDPRESS_DATABASE_NAME=bitnami_wordpress
       - ALLOW_EMPTY_PASSWORD=yes
-    labels:
-      - "traefik.backend=wordpress-example"
-      - "traefik.docker.network=wordpress"
-      - "traefik.frontend.rule=Host:wordpress.local,www.wordpress.local"
-      - "traefik.enable=true"
-      - "traefik.port=80"
+    deploy:
+      replicas: 1
+      labels:
+        - "traefik.backend=wordpress-example"
+        - "traefik.docker.network=wordpress"
+        - "traefik.frontend.rule=Host:wordpress.local,www.wordpress.local"
+        - "traefik.enable=true"
+        - "traefik.port=80"
   code-server:
     image: 'codercom/code-server'
     networks:
       - wordpress
       - default
+    deploy:
+      replicas: 1
     ports:
       - '40:8443'
     volumes:
